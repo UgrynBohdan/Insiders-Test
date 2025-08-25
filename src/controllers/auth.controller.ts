@@ -1,39 +1,38 @@
 import { Request, Response } from "express";
-import pool from "../db/db";
 import { hashPassword, comparePassword } from "../utils/hash";
 import { generateToken } from "../utils/jwt";
+import { getUserByEmail, registerUser } from "../db/auth.repositories";
+import { ІUser } from "../interfaces"
 
 export const register = async (req: Request, res: Response) => {
-    console.log("dsdsds");
     const { name, email, password } = req.body;
 
     if (!name || !email || !password)
         return res.status(400).json({ message: "All fields required" });
 
-    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
+    const rows = await getUserByEmail(email)
     if ((rows as any[]).length > 0) {
         return res.status(400).json({ message: "Email already exists" });
     }
 
     const hashed = await hashPassword(password);
 
-    await pool.query(
-        "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
-        [name, email, hashed, "User"]
-    );
+    await registerUser(name, email, hashed)
 
     res.status(201).json({ message: "User registered" });
 };
 
 export const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body
 
-    const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
-    const users = rows as any[];
+    if (!email || !password)
+        return res.status(400).json({ message: "All fields required" });
 
-    if (users.length === 0) return res.status(400).json({ message: "Invalid credentials" });
+    const [rows] = await getUserByEmail(email)
+    const user = rows as ІUser
 
-    const user = users[0];
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+        
     const match = await comparePassword(password, user.password);
     if (!match) return res.status(400).json({ message: "Invalid credentials" });
 
