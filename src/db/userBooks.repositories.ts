@@ -14,15 +14,12 @@ export async function createBook(userId: number, bookName: string, author: strin
     return rows
 }
 
-export async function getUserBook(bookId: number, userId: number) { 
-    const [rows] = await pool.query("SELECT * FROM books WHERE id = ? AND user_id = ?", [
-        bookId,
-        userId,
-    ]);
+export async function getUserBook(bookId: number) { 
+    const [rows] = await pool.execute("SELECT user_id FROM books WHERE id=?", [bookId]);
     return rows
 }
 
-export async function dropUserBook(bookId: number, userId: number) {
-    const [rows] = await pool.query("DELETE FROM books WHERE id = ? AND user_id = ?", [bookId, userId]);
+export async function dropUserBook(bookId: number) {
+    const [rows] = await pool.execute("DELETE FROM books WHERE id=?", [bookId]);
     return rows
 }

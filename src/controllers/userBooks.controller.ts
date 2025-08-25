@@ -46,25 +46,30 @@ export const addBook = async (req: AuthRequest, res: Response) => {
 };
 
 // Видалення книги
-export const deleteBook = async (req: AuthRequest, res: Response) => {
-    const { id } = req.params
-
-    if (!req.user) {
-        res.status(400).json({ message: "User is undefined" });
-        return
-    }
+export const deleteBook = async (req: Request, res: Response) => {
+    const bookId = Number(req.params.id);
+    const user = (req as any).user;
 
     try {
-        const rows = await getUserBook(Number(id), req.user.id)
-
-        if ((rows as any[]).length === 0) {
-            return res.status(404).json({ message: "Book not found or not yours" })
+        // Якщо Admin — може видалити будь-яку
+        if (user.role === "Admin") {
+            await dropUserBook(bookId)
+            return res.json({ message: "Book deleted by Admin" });
         }
 
-        await dropUserBook(Number(id), req.user.id)
+        // Якщо User — тільки свою
+        const [rows]: any = await getUserBook(bookId)
+        if (rows.length === 0) return res.status(404).json({ message: "Book not found" });
 
-        res.json({ message: "Book deleted" })
+        if (rows[0].user_id !== user.id) {
+            return res.status(403).json({ message: "You can delete only your own books" });
+        }
+
+        await getUserBook(bookId)
+        res.json({ message: "Book deleted" });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Error deleting book" });
     }
 };
+
