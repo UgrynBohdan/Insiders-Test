@@ -1,11 +1,9 @@
 import { Router } from "express";
-import { getMyBooks, addBook, deleteBook } from "../controllers/book.controller";
-import authMiddleware from "../middlewares/auth";
+import { getBookById, getBooks } from "../controllers/books.controller";
 
-const bookRoutes = Router();
+const booksRoutes = Router();
 
-bookRoutes.get("/", authMiddleware, getMyBooks);
-bookRoutes.post("/", authMiddleware, addBook);
-bookRoutes.delete("/:id", authMiddleware, deleteBook);
+booksRoutes.get("/", getBooks);
+booksRoutes.get("/:id", getBookById);
 
-export default bookRoutes;
+export default booksRoutes;

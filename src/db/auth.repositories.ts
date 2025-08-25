@@ -1,5 +1,5 @@
 import pool from "./db"
-import { QueryResult, ResultSetHeader } from "mysql2"
+import { ResultSetHeader } from "mysql2"
 
 
 export async function registerUser(name: string, email: string, hashed: string): Promise<ResultSetHeader> {

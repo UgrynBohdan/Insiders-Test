@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../middlewares/auth";
-import { createBook, dropUserBook, getUserBook, getUserBooksById } from "../db/book.repositories";
+import { createBook, dropUserBook, getUserBook, getUserBooksById } from "../db/userBooks.repositories";
 // import { AuthRequest } from "../middlewares/auth";
 
 // Перегляд своїх книг
