@@ -1,0 +1,28 @@
+import express from 'express'
+import cors from 'cors'
+import dotenv from 'dotenv'
+dotenv.config()
+
+import * as errorMiddlewares from './middlewares/error';
+import loggerMiddleware from './middlewares/logger';
+import router from './routes/auth.routes';
+
+const app = express();
+app.use(express.json())
+
+app.use(cors())
+
+app.use(loggerMiddleware)
+
+
+app.use(router)
+
+app.use(errorMiddlewares.notFoundMiddleware)
+app.use(errorMiddlewares.errorMiddleware)
+
+
+const PORT = Number(process.env.AUTH_PORT)
+const HOST = process.env.AUTH_HOST as string
+app.listen(PORT, HOST, () => {
+    console.log(`Сервер працює на http://${HOST}:${PORT}`);
+});
