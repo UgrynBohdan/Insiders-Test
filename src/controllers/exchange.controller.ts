@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 
 // створюємо транспортер
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com", // або твій SMTP
+    host: "smtp.gmail.com",
     port: 587,
     secure: false,
     auth: {
