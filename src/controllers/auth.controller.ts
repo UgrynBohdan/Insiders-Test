@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { hashPassword, comparePassword } from "../utils/hash";
 import { generateToken } from "../utils/jwt";
 import { getUserByEmail, registerUser } from "../db/auth.repositories";
-import { ІUser } from "../interfaces"
+import { IUser } from "../interfaces"
 
 export const register = async (req: Request, res: Response) => {
     const { name, email, password } = req.body;
@@ -29,17 +29,17 @@ export const login = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "All fields required" });
 
     const [rows] = await getUserByEmail(email)
-    const user = rows as ІUser
+    const user = { id: rows.id, name: rows.name, email: rows.email, role: rows.role }
 
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
         
-    const match = await comparePassword(password, user.password);
+    const match = await comparePassword(password, rows.password);
     if (!match) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = generateToken({ id: user.id, role: user.role });
+    const token = generateToken(user);
 
     res.json({
         token,
-        user: { id: user.id, name: user.name, email: user.email, role: user.role },
+        user,
     });
 };

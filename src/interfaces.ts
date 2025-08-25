@@ -1,8 +1,7 @@
-export interface ІUser {
+import { Request } from "express";
+export interface IUser {
     id: number;
     name: string;
     email: string;
-    password: string;
     role: 'User' | 'Admin';
-    created_at: Date;
 }
