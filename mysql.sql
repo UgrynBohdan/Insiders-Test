@@ -17,3 +17,7 @@ CREATE TABLE books (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
+
+UPDATE users SET role = 'Admin' WHERE name = 'Admin';
+
+SELECT * FROM users

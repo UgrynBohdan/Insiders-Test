@@ -16,7 +16,7 @@ app.use(cors())
 
 app.use(loggerMiddleware)
 
-app.use('/admin', adminRouter)
+app.use('/api/admin', adminRouter)
 app.use("/api/auth", authRouters)
 app.use('/api/me/books', userBooksRoutes)
 app.use("/api/books", booksRoutes)
