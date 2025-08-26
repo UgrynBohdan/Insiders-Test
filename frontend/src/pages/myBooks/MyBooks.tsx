@@ -3,13 +3,7 @@ import axios from "axios";
 import BookList from "@/pages/myBooks/BooksList";
 import AddBookForm from "@/pages/myBooks/AddBookForm";
 import { useNavigate } from "react-router-dom";
-
-export interface Book {
-    id: number;
-    name: string;
-    author: string;
-    photo: string;
-}
+import type { Book } from "@/pages/books/BooksPage";
 
 function MyBooks() {
     const [books, setBooks] = useState<Book[]>([]);
