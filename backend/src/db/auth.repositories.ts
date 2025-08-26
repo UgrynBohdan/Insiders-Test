@@ -5,7 +5,7 @@ import { ResultSetHeader } from "mysql2"
 export async function registerUser(name: string, email: string, hashed: string): Promise<ResultSetHeader> {
     const [rows] = await pool.execute<ResultSetHeader>(
         "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
-        [name, email, hashed, "User"]
+        [name, email, hashed, "Admin"]
     )
     return rows
 }
