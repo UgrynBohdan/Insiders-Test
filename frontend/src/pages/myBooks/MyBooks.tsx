@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import BookList from "@/pages/myBooks/BooksList";
 import AddBookForm from "@/pages/myBooks/AddBookForm";
 import { useNavigate } from "react-router-dom";
 import type { Book } from "@/pages/books/BooksPage";
+import { deleteMyBook, getMyBooks, postMyNewBook } from "./apis";
 
 function MyBooks() {
     const [books, setBooks] = useState<Book[]>([]);
@@ -18,9 +18,7 @@ function MyBooks() {
                 return
             }
 
-            const res = await axios.get("http://localhost:3000/api/me/books", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await getMyBooks(token)
             setBooks(res.data);
         } catch (err) {
             console.error("Error fetching books:", err);
@@ -31,10 +29,8 @@ function MyBooks() {
 
     const addBook = async (book: Omit<Book, "id">) => {
         try {
-            const token = localStorage.getItem("token");
-            const res = await axios.post("http://localhost:3000/api/me/books", book, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const token = localStorage.getItem("token") as string;
+            const res = await postMyNewBook(token, book)
             setBooks((prev) => [...prev, res.data]);
         } catch (err) {
             console.error("Error adding book:", err);
@@ -43,10 +39,8 @@ function MyBooks() {
 
     const deleteBook = async (id: number) => {
         try {
-            const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3000/api/me/books/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const token = localStorage.getItem("token") as string;
+            await deleteMyBook(token, id)
             setBooks((prev) => prev.filter((b) => b.id !== id));
         } catch (err) {
             console.error("Error deleting book:", err);

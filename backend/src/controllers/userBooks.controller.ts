@@ -61,11 +61,10 @@ export const deleteBook = async (req: Request, res: Response) => {
         const [rows]: any = await getUserBook(bookId)
         if (rows.length === 0) return res.status(404).json({ message: "Book not found" });
 
-        if (rows[0].user_id !== user.id) {
+        if (rows.user_id !== user.id) {
             return res.status(403).json({ message: "You can delete only your own books" });
         }
 
-        await getUserBook(bookId)
         res.json({ message: "Book deleted" });
     } catch (err) {
         console.error(err);
