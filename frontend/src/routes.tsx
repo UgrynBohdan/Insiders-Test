@@ -5,6 +5,7 @@ import Register from "./pages/auth/Register";
 import MyBooks from "./pages/myBooks/MyBooks";
 import BooksPage from "./pages/books/BooksPage";
 import BookDetails from "./pages/books/BookDetails";
+import AdminPage from "./pages/admin/AdminPage";
 
 export default function AppRoutes() {
     return (
@@ -15,6 +16,7 @@ export default function AppRoutes() {
             <Route path="/me/books" element={<MyBooks />} />
             <Route path="/books" element={<BooksPage />} />
             <Route path="/books/:id" element={<BookDetails />} />
+            <Route path="/admin" element={<AdminPage />} />
         </Routes>
     );
 }
