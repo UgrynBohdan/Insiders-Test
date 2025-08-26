@@ -1,4 +1,4 @@
-import type { Book } from "@/pages/myBooks/MyBooks";
+import type { Book } from "@/pages/books/BooksPage";
 
 interface Props {
   book: Book;

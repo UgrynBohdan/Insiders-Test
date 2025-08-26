@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Book } from "@/pages/myBooks/MyBooks";
+import type { Book } from "@/pages/books/BooksPage";
 
 interface Props {
   onAdd: (book: Omit<Book, "id">) => void;
