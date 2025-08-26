@@ -1,8 +1,10 @@
+import { useAuth } from "@/components/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-white text-center px-4">
@@ -14,20 +16,24 @@ export default function Home() {
                 розвивай свою бібліотеку разом із нашим сервісом.
             </p>
 
-            <div className="flex gap-4">
-                <Button
-                    className="bg-blue-600 hover:bg-blue-700"
-                    onClick={() => navigate("/login")}
-                >
-                    Login
-                </Button>
-                <Button
-                    className="bg-green-600 hover:bg-green-700"
-                    onClick={() => navigate("/register")}
-                >
-                    Register
-                </Button>
-            </div>
+            {!user ?
+                <div className="flex gap-4">
+                    <Button
+                        className="bg-blue-600 hover:bg-blue-700"
+                        onClick={() => navigate("/login")}
+                    >
+                        Login
+                    </Button>
+                    <Button
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => navigate("/register")}
+                    >
+                        Register
+                    </Button>
+                </div>
+            : 
+                <></>
+            }
 
             <div className="mt-6">
                 <Button
