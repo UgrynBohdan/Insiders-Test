@@ -1,48 +1,53 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import type { Book } from "./BooksPage";
 
 
 function BookDetails() {
-  const { id } = useParams<{ id: string }>();
-  const [book, setBook] = useState<Book | null>(null);
-  const [loading, setLoading] = useState(true);
+    const { id } = useParams<{ id: string }>();
+    const [book, setBook] = useState<Book | null>(null);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate()
 
-  const fetchBook = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`http://localhost:3000/api/books/${id}`);
-      setBook(res.data);
-    } catch (err) {
-      console.error("Error fetching book:", err);
-    } finally {
-      setLoading(false);
+    const handleGoBack = () => {
+        navigate(-1)
     }
-  };
 
-  useEffect(() => {
-    fetchBook();
-  }, [id]);
+    const fetchBook = async () => {
+        try {
+            setLoading(true);
+            const res = await axios.get(`http://localhost:3000/api/books/${id}`);
+            setBook(res.data);
+        } catch (err) {
+            console.error("Error fetching book:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  if (loading) return <p className="p-6">Loading...</p>;
-  if (!book) return <p className="p-6">Book not found</p>;
+    useEffect(() => {
+        fetchBook();
+    }, [id]);
 
-  return (
-    <div className="max-w-3xl mx-auto p-6">
-      <Link to="/books" className="text-blue-600 hover:underline mb-4 block">
-        ← Back to list
-      </Link>
+    if (loading) return <p className="p-6">Loading...</p>;
+    if (!book) return <p className="p-6">Book not found</p>;
 
-      <img
-        src={book.photo}
-        alt={book.name}
-        className="w-full h-64 object-cover rounded mb-4"
-      />
-      <h1 className="text-3xl font-bold">{book.name}</h1>
-      <p className="text-lg text-gray-600 mb-4">by {book.author}</p>
-    </div>
-  );
+    return (
+        <div className="max-w-3xl mx-auto p-6">
+            <button onClick={handleGoBack} className="text-blue-600 hover:underline mb-4 block">
+                ← Back to list
+            </button>
+
+            <img
+                src={book.photo}
+                alt={book.name}
+                className="w-full h-64 object-cover rounded mb-4"
+            />
+            <h1 className="text-3xl font-bold">{book.name}</h1>
+            <p className="text-lg text-gray-600 mb-4">by {book.author}</p>
+        </div>
+    );
 }
 
 export default BookDetails;
