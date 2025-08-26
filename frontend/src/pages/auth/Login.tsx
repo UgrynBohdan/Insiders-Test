@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthContext";
+import { postLogin } from "./apis";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -15,15 +16,9 @@ export default function Login() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:3000/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message);
+            const token = await postLogin(email, password)
 
-            await login(data.token); // тут збережеться юзер
+            await login(token); // тут збережеться юзер
             navigate("/books");
         } catch (err: any) {
             setError(err.message);

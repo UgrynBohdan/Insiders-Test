@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/AuthContext";
+import { postLogin, postRegister } from "./apis";
 
 export default function Register() {
     const navigate = useNavigate();
@@ -18,26 +19,12 @@ export default function Register() {
         setError("");
 
         try {
-            const res = await fetch("http://localhost:3000/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password }),
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Register failed");
-            console.log({data, res})
-
+            const res = await postRegister(name, email, password)
+            if (res) console.log('Registration successful!');
             
-            const loginRes = await fetch("http://localhost:3000/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-            const loginData = await loginRes.json();
-            if (!loginRes.ok) throw new Error(loginData.message);
+            const token = await postLogin(email, password)
 
-            await login(loginData.token); // тут збережеться юзер
+            await login(token); // тут збережеться юзер
             navigate("/books");
         } catch (err: any) {
             setError(err.message);
