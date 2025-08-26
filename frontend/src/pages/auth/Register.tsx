@@ -2,35 +2,39 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/AuthContext";
 
 export default function Register() {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    const { login } = useAuth();
+    
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
 
-    try {
-      const res = await fetch("http://localhost:3000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+        try {
+        const res = await fetch("http://localhost:3000/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password }),
+        });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Register failed");
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Register failed");
 
-      localStorage.setItem("token", data.token); // одразу логінимо після реєстрації
-      navigate("/books");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+        await login(data.token);
+        navigate("/books");
+        } catch (err: any) {
+        setError(err.message);
+        }
+    };
 
+  
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <form
