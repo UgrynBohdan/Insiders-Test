@@ -1,8 +1,11 @@
+import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
+    id: number;
     name: string;
     email: string;
+    role: string;
 };
 
 type AuthContextType = {
@@ -26,11 +29,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const fetchUser = async (token: string) => {
         try {
-            const res = await fetch("http://localhost:3000/api/auth/me", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-            const data = await res.json();
-            if (res.ok) setUser(data.user);
+            const res = jwtDecode(token) as any
+            setUser({id: res.id, name: res.name, email: res.email, role: res.role})
         } catch (e) {
             console.error("Fetch user failed:", e);
         }
@@ -42,8 +42,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     const logout = () => {
-        localStorage.removeItem("token");
-        setUser(null);
+        localStorage.clear
+        setUser(null)
     };
 
     return (
