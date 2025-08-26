@@ -1,5 +1,5 @@
-import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 type User = {
     id: number;
@@ -10,8 +10,8 @@ type User = {
 
 type AuthContextType = {
     user: User | null;
-    login: (token: string) => Promise<void>;
-    logout: () => void;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,31 +19,45 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
 
-    // при завантаженні пробуємо відновити юзера з токена
+    // при завантаженні пробуємо отримати юзера з бекенду
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            fetchUser(token);
-        }
+        fetchMe();
     }, []);
 
-    const fetchUser = async (token: string) => {
+    const fetchMe = async () => {
         try {
-            const res = jwtDecode(token) as any
-            setUser({id: res.id, name: res.name, email: res.email, role: res.role})
+            const res = await axios.get("http://localhost:3000/api/me", {
+                withCredentials: true, // щоб відправляти куки
+            });
+            setUser(res.data);
         } catch (e) {
+            setUser(null);
             console.error("Fetch user failed:", e);
         }
     };
 
-    const login = async (token: string) => {
-        localStorage.setItem("token", token);
-        await fetchUser(token);
+    const login = async (email: string, password: string) => {
+        try {
+            await axios.post(
+                "http://localhost:3000/api/auth/login",
+                { email, password },
+                { withCredentials: true }
+            );
+            // після логіну кука вже є, просто тягнемо /me
+            await fetchMe();
+        } catch (e) {
+            console.error("Login failed:", e);
+            throw e;
+        }
     };
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        setUser(null);
+    const logout = async () => {
+        try {
+            await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
+            setUser(null);
+        } catch (e) {
+            console.error("Logout failed:", e);
+        }
     };
 
     return (
@@ -51,10 +65,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             {children}
         </AuthContext.Provider>
     );
-};
+    };
 
 export const useAuth = () => {
     const ctx = useContext(AuthContext);
     if (!ctx) throw new Error("useAuth must be inside AuthProvider");
-        return ctx;
+    return ctx;
 };

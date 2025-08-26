@@ -37,8 +37,16 @@ export const login = async (req: Request, res: Response) => {
 
     const token = generateToken(user);
 
-    res.json({
-        token,
-        user,
+    // виставляємо HttpOnly cookie
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict", // захист від CSRF
+        maxAge: 60 * 60 * 1000,
     });
+    return res.json({ message: "Logged in successfully" });
+    // res.json({
+    //     token,
+    //     user,
+    // });
 };

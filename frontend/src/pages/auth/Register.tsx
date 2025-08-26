@@ -22,9 +22,9 @@ export default function Register() {
             const res = await postRegister(name, email, password)
             if (res) console.log('Registration successful!');
             
-            const token = await postLogin(email, password)
+            // const token = await postLogin(email, password)
 
-            await login(token); // тут збережеться юзер
+            await login(email, password); // тут збережеться юзер
             navigate("/books");
         } catch (err: any) {
             setError(err.message);

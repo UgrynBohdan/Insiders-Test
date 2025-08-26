@@ -12,15 +12,12 @@ function MyBooks() {
 
     const fetchBooks = async () => {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) {
-                navigate('/register', { replace: true })
-                return
-            }
-
-            const res = await getMyBooks(token)
+            const res = await getMyBooks();
             setBooks(res.data);
-        } catch (err) {
+        } catch (err: any) {
+            if (err.response?.status === 401) {
+                navigate("/register", { replace: true });
+            }
             console.error("Error fetching books:", err);
         } finally {
             setLoading(false);
@@ -29,8 +26,7 @@ function MyBooks() {
 
     const addBook = async (book: Omit<Book, "id">) => {
         try {
-            const token = localStorage.getItem("token") as string;
-            const res = await postMyNewBook(token, book)
+            const res = await postMyNewBook(book);
             setBooks((prev) => [...prev, res.data]);
         } catch (err) {
             console.error("Error adding book:", err);
@@ -39,8 +35,7 @@ function MyBooks() {
 
     const deleteBook = async (id: number) => {
         try {
-            const token = localStorage.getItem("token") as string;
-            await deleteMyBook(token, id)
+            await deleteMyBook(id);
             setBooks((prev) => prev.filter((b) => b.id !== id));
         } catch (err) {
             console.error("Error deleting book:", err);

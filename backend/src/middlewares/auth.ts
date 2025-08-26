@@ -6,8 +6,8 @@ export interface AuthRequest extends Request {
     user?: IUser;
 }
 
-function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
-    const token = req.headers.authorization?.split(" ")[1];
+export function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
+    const token = req.cookies.token; // беремо з куки
     if (!token) return res.status(401).json({ message: "No token" });
 
     try {
@@ -15,7 +15,7 @@ function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
         req.user = decoded as IUser;
         next();
     } catch (err) {
-        return res.status(403).json({ message: "Invalid token" });
+        return res.status(401).json({ message: "Invalid token" });
     }
 }
 

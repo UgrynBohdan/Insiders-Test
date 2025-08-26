@@ -16,9 +16,9 @@ export default function Login() {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const token = await postLogin(email, password)
+            // const token = await postLogin(email, password)
 
-            await login(token); // тут збережеться юзер
+            await login(email, password); // тут збережеться юзер
             navigate("/books");
         } catch (err: any) {
             setError(err.message);

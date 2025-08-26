@@ -7,6 +7,6 @@ const booksRoutes = Router();
 
 booksRoutes.get("/", getBooks);
 booksRoutes.get("/:id", getBookById);
-booksRoutes.get("/:id/request-exchange", authMiddleware, requestExchange);
+booksRoutes.post("/:id/request-exchange", authMiddleware, requestExchange);
 
 export default booksRoutes;
