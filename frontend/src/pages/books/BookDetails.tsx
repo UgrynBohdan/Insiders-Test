@@ -33,6 +33,22 @@ function BookDetails() {
     if (loading) return <p className="p-6">Loading...</p>;
     if (!book) return <p className="p-6">Book not found</p>;
 
+    // http://localhost:3000/api/books/21/request-exchange
+    const requestExchange = async () => {
+        try {
+            const token = localStorage.getItem('token')
+            const res = await axios.get(`http://localhost:3000/api/books/${id}/request-exchange`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            alert(res.data.message)
+        } catch (err) {
+            alert((err as any).response.data.message)
+            console.error(err)
+        }
+    }
+
+
     return (
         <div className="max-w-3xl mx-auto p-6">
             <button onClick={handleGoBack} className="text-blue-600 hover:underline mb-4 block">
@@ -46,6 +62,11 @@ function BookDetails() {
             />
             <h1 className="text-3xl font-bold">{book.name}</h1>
             <p className="text-lg text-gray-600 mb-4">by {book.author}</p>
+            <p className="text-lg text-gray-600 mb-4">Owner is {book.owner_name}</p>
+            
+            <button onClick={requestExchange} className="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                ask for an exchange
+            </button>
         </div>
     );
 }
