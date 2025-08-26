@@ -18,13 +18,12 @@ function AdminPage() {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const { user } = useAuth();
     const navigate = useNavigate()
-    const token = localStorage.getItem("token");
 
     const fetchUsers = async () => {
         try {
             setLoading(true);
             const res = await axios.get("http://localhost:3000/api/admin/users", {
-                headers: { Authorization: `Bearer ${token}` }
+                withCredentials: true,
             });
             setUsers(res.data);
         } catch (err) {
@@ -51,7 +50,7 @@ function AdminPage() {
         if (!window.confirm("Delete this user?")) return;
         try {
             await axios.delete(`http://localhost:3000/api/admin/users/${id}`, {
-                headers: { Authorization: `Bearer ${token}` }
+                withCredentials: true,
             });
             setUsers(users.filter((u) => u.id !== id));
             fetchUsers();
@@ -65,7 +64,7 @@ function AdminPage() {
         const res = await axios.put(
             `http://localhost:3000/api/admin/users/${user.id}`,
             user,
-            { headers: { Authorization: `Bearer ${token}` } }
+            {withCredentials: true,}
         );
         setUsers(users.map((u) => (u.id === user.id ? res.data : u)));
         setEditingUser(null);
